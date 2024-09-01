@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendation System</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Movie Recommendation System</h1>
+    <form id="movie-form" method="POST">
+        <input type="text" id="movie_title" name="movie_title" placeholder="Enter movie title">
+        <button type="submit">Get Recommendations</button>
+    </form>
+    
+    <div id="titles-list"></div>
+    
+    <h2>Recommendations:</h2>
+    <ul>
+        {% if recommendations %}
+            {% for rec in recommendations %}
+                <li>{{ rec['title'] }} - Score: {{ rec['score'] }} - Genres: {{ rec['genres'] }}</li>
+            {% endfor %}
+        {% else %}
+            <li>No recommendations found.</li>
+        {% endif %}
+    </ul>
+
+    <script>
+        $(document).ready(function() {
+            $('#movie_title').on('input', function() {
+                const movieTitle = $(this).val();
+                $.ajax({
+                    url: '/titles',
+                    type: 'POST',
+                    data: { movie_title: movieTitle },
+                    success: function(data) {
+                        let titles = data.titles;
+                        $('#titles-list').html('');
+                        titles.forEach(function(title) {
+                            $('#titles-list').append(`<p>${title}</p>`);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
